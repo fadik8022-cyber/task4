@@ -1,39 +1,84 @@
-async function uploadFile() {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure Image Upload</title>
 
-    const fileInput = document.getElementById("imageInput");
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #f4f4f4;
+        }
 
-    if (fileInput.files.length === 0) {
-        alert("Select a file");
-        return;
-    }
+        .container {
+            background: white;
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
 
-    const file = fileInput.files[0];
+        button {
+            background: #0078D4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    const sasUrl =
-        "BURAYA_CONTAINER_SAS_URL";
+        button:hover {
+            background: #005A9E;
+        }
 
-    const blobUrl =
-        sasUrl.split("?")[0] + "/" +
-        file.name +
-        "?" +
-        sasUrl.split("?")[1];
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
 
-    const response = await fetch(blobUrl, {
-        method: "PUT",
-        headers: {
-            "x-ms-blob-type": "BlockBlob",
-            "Content-Type": file.type
-        },
-        body: file
-    });
+    <div class="container">
+        <h2>Upload Your Image</h2>
 
-    if (response.ok) {
-        alert("Upload successful");
-    } else {
-        alert("Upload failed");
-    }
-}
-<button onclick="uploadFile()">
-    Upload to Azure
-</button>
+        <input type="file" id="imageInput" accept="image/*">
+        <br><br>
 
+        <button onclick="previewImage()">Preview Image</button>
+
+        <div>
+            <img id="preview">
+        </div>
+    </div>
+
+    <script>
+        function previewImage() {
+            const fileInput = document.getElementById("imageInput");
+            const preview = document.getElementById("preview");
+
+            if (fileInput.files.length === 0) {
+                alert("Please select an image.");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = "block";
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+</body>
+</html>
